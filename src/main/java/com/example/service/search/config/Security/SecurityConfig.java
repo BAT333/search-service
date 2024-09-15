@@ -3,7 +3,6 @@ package com.example.service.search.config.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,17 +21,15 @@ public class SecurityConfig {
     private SecurityFilter filter;
     @Autowired
     private GatewayFilter gatewayFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security){
         try {
             return security.csrf(AbstractHttpConfigurer::disable)
-                    .sessionManagement(https-> https.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                    .authorizeHttpRequests(authoriza->
-                            authoriza.
-                                    requestMatchers("/public/**").permitAll().
-                                    requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll().
-                                    anyRequest().permitAll())
+                    .sessionManagement(https -> https.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(authorize -> authorize.
+                            requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                            .anyRequest().authenticated())
                     .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                     .addFilterBefore(gatewayFilter, UsernamePasswordAuthenticationFilter.class)
                     .build();
@@ -40,11 +37,11 @@ public class SecurityConfig {
             throw new RuntimeException(e);
         }
     }
-
     @Bean
     public AuthenticationManager manager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
     @Bean
     public PasswordEncoder encoder(){
         return new BCryptPasswordEncoder();
