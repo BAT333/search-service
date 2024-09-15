@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("search")
 @SecurityRequirement(name = "bearer-key")
+@CrossOrigin(origins = "http://172.27.64.1:8082")
 public class SearchController {
     @Autowired
     private SearchService service;
