@@ -4,6 +4,7 @@ package com.example.service.search.model;
 
 import com.example.service.search.domain.Propertie;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 public record DataPropertieSearch(
@@ -14,7 +15,7 @@ public record DataPropertieSearch(
         ContractType type,
         PropertyType propertyType,
         DataAddressDTO address
-) {
+) implements Serializable {
     public DataPropertieSearch(Propertie propertie) {
         this(propertie.getId(), propertie.getQuantityRoom(), propertie.getPrice(),
                 propertie.getDescription(), propertie.getType(),propertie.getPropertyType(),new DataAddressDTO(propertie.getAddress()));
